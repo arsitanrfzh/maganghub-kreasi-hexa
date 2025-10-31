@@ -52,7 +52,7 @@ INSERT INTO items (name, description, price, stock, category_id) VALUES
 ('IMHO Watch', 'jam tangan anak yang jujur banget', 2000000, 10, 1);
 
 
--- Soal 4 Mengambil Data dari Database
+// Soal 4 Mengambil Data dari Database
 1. Mengambil data users (kecuali password)
 SELECT id, name, email FROM users;
 
