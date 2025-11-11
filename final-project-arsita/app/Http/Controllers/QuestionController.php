@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Category;
+use App\Models\Question;
+
 
 class QuestionController extends Controller
 {
@@ -19,7 +23,11 @@ class QuestionController extends Controller
      */
     public function create()
     {
-        //
+        // Ambil semua kategori untuk ditampilkan di dropdown
+        $categories = Category::all();
+
+        // Kirim data kategori ke view
+        return view('questions.create', compact('categories'));
     }
 
     /**
@@ -27,7 +35,34 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // 1. Validasi data
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id', // Pastikan kategori ada di tabel
+            'body' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Opsional, maks 2MB
+        ]);
+
+        // 2. Handle upload gambar (jika ada)
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            // Simpan gambar ke folder 'public/images/questions'
+            // 'store' akan membuat nama file acak yg unik
+            $imagePath = $request->file('image')->store('images/questions', 'public');
+        }
+
+        // 3. Simpan data ke database
+        Question::create([
+            'title' => $validated['title'],
+            'category_id' => $validated['category_id'],
+            'body' => $validated['body'],
+            'image' => $imagePath, // Simpan path gambar (atau null jika tidak ada)
+            'user_id' => Auth::id(), // Ambil ID user yang sedang login
+        ]);
+
+        // 4. Redirect ke halaman (misal, ke dashboard)
+        // Nanti kita akan ganti ini ke halaman index questions
+        return redirect()->route('dashboard')->with('success', 'Pertanyaan berhasil dipublikasikan!');
     }
 
     /**
