@@ -139,8 +139,23 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Question $question)
     {
-        //
+        // Cek apakah user yg login adalah pemilik pertanyaan
+        if (Auth::id() !== $question->user_id) {
+            abort(403, 'ANDA TIDAK PUNYA HAK AKSES');
+        }
+
+        // 1. Hapus gambar dari storage (jika ada)
+        if ($question->image) {
+            Storage::delete('public/' . $question->image);
+        }
+
+        // 2. Hapus data pertanyaan dari database
+        // Jawaban yg terkait akan ikut terhapus karena 'onDelete('cascade')' di migrasi
+        $question->delete();
+
+        // 3. Redirect (misal, ke halaman index questions)
+        return redirect()->route('questions.index')->with('success', 'Pertanyaan berhasil dihapus!');
     }
 }
