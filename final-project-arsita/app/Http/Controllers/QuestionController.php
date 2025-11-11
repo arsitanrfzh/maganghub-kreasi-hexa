@@ -15,7 +15,10 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        //
+        // Ambil semua pertanyaan, urutkan dari yg terbaru
+        $questions = Question::with('user', 'category')->latest()->get();
+
+        return view('questions.index', compact('questions'));
     }
 
     /**
@@ -68,9 +71,9 @@ class QuestionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Question $question)
     {
-        //
+        return view('questions.show', compact('question'));
     }
 
     /**
