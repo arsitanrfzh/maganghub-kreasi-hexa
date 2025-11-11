@@ -48,8 +48,34 @@
 
                         <h3 class="font-semibold text-lg mb-4">Jawaban:</h3>
                         <div class="space-y-4">
-                            {{-- Daftar jawaban akan di-loop di sini --}}
+
+                            @forelse ($question->answers as $answer)
+                            <div class="p-4 border rounded-lg bg-gray-50">
+                                <div class="text-sm text-gray-600 mb-2">
+                                    Dijawab oleh: **{{ $answer->user->name }}** <span class="text-gray-400">| Pada: {{ $answer->created_at->format('d M Y, H:i') }}</span>
+                                </div>
+
+                                <div class="text-gray-800">
+                                    {!! nl2br(e($answer->body)) !!}
+                                </div>
+
+                                @if ($answer->user_id == Auth::id())
+                                <div class="text-right mt-2">
+                                    <form class="inline-block" action="{{ route('answers.destroy', $answer->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus jawaban ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs text-red-600 hover:text-red-900">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                                @endif
+
+                            </div>
+                            @empty
                             <p class="text-gray-500">Belum ada jawaban.</p>
+                            @endforelse
+
                         </div>
 
                         <div class="mt-8">

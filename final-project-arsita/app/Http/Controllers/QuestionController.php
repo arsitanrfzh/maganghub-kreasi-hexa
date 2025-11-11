@@ -74,6 +74,9 @@ class QuestionController extends Controller
      */
     public function show(Question $question)
     {
+        // Muat relasi answers, dan di dalam answers, muat juga relasi user-nya
+        $question->load('answers.user');
+
         return view('questions.show', compact('question'));
     }
 
