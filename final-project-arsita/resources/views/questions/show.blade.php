@@ -52,6 +52,25 @@
                             <p class="text-gray-500">Belum ada jawaban.</p>
                         </div>
 
+                        <div class="mt-8">
+                            <h3 class="font-semibold text-lg mb-4">Tulis Jawaban Anda</h3>
+                            <form action="{{ route('answers.store', $question->id) }}" method="POST">
+                                @csrf
+
+                                <div>
+                                    <textarea id="body" name="body" rows="5" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">{{ old('body') }}</textarea>
+                                    @error('body')
+                                    <span class="text-sm text-red-600">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="flex items-center justify-end mt-4">
+                                    <button type="submit" class="ml-4 inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                                        Kirim Jawaban
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
