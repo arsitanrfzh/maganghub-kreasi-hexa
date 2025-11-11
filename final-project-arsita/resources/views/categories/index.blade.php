@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Kategori') }}
+            {{ __('Categories') }}
         </h2>
     </x-slot>
 
@@ -9,26 +9,50 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    
+                    <a href="{{ route('categories.create') }}" class="mb-4 inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
+                        Tambah Kategori
+                    </a>
 
-                    <form method="POST" action="{{ route('categories.update', $category->id) }}">
-                        @csrf
-                        @method('PUT') <div>
-                            <label for="name" class="block font-medium text-sm text-gray-700">Nama</label>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            
+                            @forelse ($categories as $category)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ $category->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    
+                                    <a href="{{ route('categories.edit', $category->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        Edit
+                                    </a>
 
-                            <input id="name" class="block mt-1 w-full rounded-md shadow-sm border-gray-300"
-                                type="text"
-                                name="name"
-                                value="{{ old('name', $category->name) }}"
-                                required
-                                autofocus />
-                        </div>
+                                    <form class="inline-block" action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus kategori ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 ml-4">
+                                            Hapus
+                                        </button>
+                                    </form>
 
-                        <div class="flex items-center justify-end mt-4">
-                            <button type="submit" class="ml-4 inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
-                                Update
-                            </button>
-                        </div>
-                    </form>
+                                </td>
+                            </tr>
+                            
+                            @empty
+                            <tr>
+                                <td colspan="2" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                    Belum ada kategori.
+                                </td>
+                            </tr>
+                            @endforelse
+
+                        </tbody>
+                    </table>
 
                 </div>
             </div>
