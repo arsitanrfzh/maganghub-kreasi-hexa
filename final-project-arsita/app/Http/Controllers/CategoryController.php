@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -21,7 +22,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -29,7 +30,19 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // 1. Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories',
+        ]);
+
+        // 2. Buat slug
+        $validated['slug'] = Str::slug($validated['name']);
+
+        // 3. Simpan ke database
+        Category::create($validated);
+
+        // 4. Redirect kembali ke halaman index
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dibuat!');
     }
 
     /**
