@@ -56,17 +56,30 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        //
+        // Kirim data kategori yang mau diedit ke view
+        return view('categories.edit', compact('category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        // 1. Validasi (mirip store, tapi 'unique' diabaikan untuk record yg sedang diedit)
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+        ]);
+
+        // 2. Buat slug baru
+        $validated['slug'] = Str::slug($validated['name']);
+
+        // 3. Update data di database
+        $category->update($validated);
+
+        // 4. Redirect
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diupdate!');
     }
 
     /**
