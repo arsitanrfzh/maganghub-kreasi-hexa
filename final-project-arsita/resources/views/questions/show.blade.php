@@ -24,20 +24,36 @@
                         </div>
                         @endif
 
+                        @if ($question->user_id == Auth::id())
+                        <div class="flex items-center space-x-4 my-4">
+                            <a href="{{ route('questions.edit', $question->id) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 ...">
+                                Edit
+                            </a>
+
+                            <form class="inline-block" action="{{ route('questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Anda yakin?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 ...">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                        @endif
+
                         <div class="text-gray-800 text-base leading-relaxed">
-                            {!! nl2br(e($question->body)) !!} </div>
+                            {!! nl2br(e($question->body)) !!}
+                        </div>
+
+                        <hr classclass="my-6">
+
+                        <h3 class="font-semibold text-lg mb-4">Jawaban:</h3>
+                        <div class="space-y-4">
+                            {{-- Daftar jawaban akan di-loop di sini --}}
+                            <p class="text-gray-500">Belum ada jawaban.</p>
+                        </div>
+
                     </div>
-
-                    <hr classclass="my-6">
-
-                    <h3 class="font-semibold text-lg mb-4">Jawaban:</h3>
-                    <div class="space-y-4">
-                        {{-- Daftar jawaban akan di-loop di sini --}}
-                        <p class="text-gray-500">Belum ada jawaban.</p>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </div>
 </x-app-layout>

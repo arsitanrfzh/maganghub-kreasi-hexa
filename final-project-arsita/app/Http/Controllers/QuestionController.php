@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\Question;
 
@@ -79,17 +80,60 @@ class QuestionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Question $question)
     {
-        //
+        // Cek apakah user yg login adalah pemilik pertanyaan
+        if (Auth::id() !== $question->user_id) {
+            abort(403, 'ANDA TIDAK PUNYA HAK AKSES');
+        }
+
+        // Ambil kategori untuk dropdown
+        $categories = Category::all();
+
+        return view('questions.edit', compact('question', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Question $question)
     {
-        //
+        // Cek apakah user yg login adalah pemilik pertanyaan
+        if (Auth::id() !== $question->user_id) {
+            abort(403, 'ANDA TIDAK PUNYA HAK AKSES');
+        }
+
+        // 1. Validasi data
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'body' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $imagePath = $question->image; // Ambil path gambar lama
+
+        // 2. Handle upload gambar BARU (jika ada)
+        if ($request->hasFile('image')) {
+            // Hapus gambar LAMA dari storage (jika ada)
+            if ($question->image) {
+                Storage::delete('public/' . $question->image);
+            }
+
+            // Simpan gambar BARU
+            $imagePath = $request->file('image')->store('images/questions', 'public');
+        }
+
+        // 3. Update data di database
+        $question->update([
+            'title' => $validated['title'],
+            'category_id' => $validated['category_id'],
+            'body' => $validated['body'],
+            'image' => $imagePath,
+        ]);
+
+        // 4. Redirect kembali ke halaman detail
+        return redirect()->route('questions.show', $question->id)->with('success', 'Pertanyaan berhasil diupdate!');
     }
 
     /**
