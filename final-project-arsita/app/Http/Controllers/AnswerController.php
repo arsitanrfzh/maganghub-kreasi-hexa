@@ -28,7 +28,7 @@ class AnswerController extends Controller
 
     public function destroy(Answer $answer)
     {
-        // 1. OTORISASI: Cek apakah user yg login adalah pemilik jawaban
+        // Cek apakah user yg login adalah pemilik jawaban
         if (Auth::id() !== $answer->user_id) {
             abort(403, 'ANDA TIDAK PUNYA HAK AKSES');
         }
@@ -37,7 +37,7 @@ class AnswerController extends Controller
         $answer->delete();
 
         // 3. Redirect kembali ke halaman pertanyaan
-        // Kita ambil question->id dari relasi $answer->question
+        // Ambil question->id dari relasi $answer->question
         return redirect()->route('questions.show', $answer->question_id)->with('success', 'Jawaban berhasil dihapus!');
     }
 }
