@@ -13,9 +13,17 @@
 
                     <div class="mb-6">
                         <div class="text-sm text-gray-600 mb-2">
-                            Ditanyakan oleh: **{{ $question->user->name }}** |
+                            Ditanyakan oleh: ... |
                             Kategori: **{{ $question->category->name }}** |
-                            Pada: {{ $question->created_at->format('d M Y, H:i') }}
+                            Pada: ...
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 my-2">
+                            @foreach ($question->tags as $tag)
+                            <span class="px-2 py-1 bg-gray-200 text-gray-700 rounded-full text-xs">
+                                {{ $tag->name }}
+                            </span>
+                            @endforeach
                         </div>
 
                         @if ($question->image)
@@ -30,7 +38,7 @@
                                 Edit
                             </a>
 
-                            <form class="inline-block" action="{{ route('questions.destroy', $question->id) }}" method="POST" onsubmit="return confirm('Anda yakin?');">
+                            <form class="inline-block form-delete" action="{{ route('questions.destroy', $question->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 ...">
@@ -61,7 +69,7 @@
 
                                 @if ($answer->user_id == Auth::id())
                                 <div class="text-right mt-2">
-                                    <form class="inline-block" action="{{ route('answers.destroy', $answer->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus jawaban ini?');">
+                                    <form class="inline-block form-delete" action="{{ route('answers.destroy', $answer->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-xs text-red-600 hover:text-red-900">

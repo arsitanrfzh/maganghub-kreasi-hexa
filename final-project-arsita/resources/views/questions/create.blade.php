@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    
+
                     <form method="POST" action="{{ route('questions.store') }}" enctype="multipart/form-data">
                         @csrf
 
@@ -23,7 +23,7 @@
                             <select name="category_id" id="category_id" class="block mt-1 w-full rounded-md shadow-sm border-gray-300" required>
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -31,6 +31,11 @@
                         <div class="mt-4">
                             <label for="body" class="block font-medium text-sm text-gray-700">Isi Pertanyaan</label>
                             <textarea id="body" name="body" rows="5" class="block mt-1 w-full rounded-md shadow-sm border-gray-300">{{ old('body') }}</textarea>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label for="tags" class="block font-medium text-sm text-gray-700">Tags (Pisahkan dengan koma)</label>
+                            <input id="tags" class="block mt-1 w-full rounded-md shadow-sm border-gray-300" type="text" name="tags" value="{{ old('tags') }}" />
                         </div>
 
                         <div class="mt-4">
@@ -44,7 +49,7 @@
                             </button>
                         </div>
                     </form>
-                    
+
                 </div>
             </div>
         </div>

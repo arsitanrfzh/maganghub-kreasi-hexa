@@ -56,16 +56,20 @@ class QuestionController extends Controller
         }
 
         // 3. Simpan data ke database
-        Question::create([
+        $question = Question::create([
             'title' => $validated['title'],
             'category_id' => $validated['category_id'],
             'body' => $validated['body'],
-            'image' => $imagePath, // Simpan path gambar (atau null jika tidak ada)
-            'user_id' => Auth::id(), // Ambil ID user yang sedang login
+            'image' => $imagePath,
+            'user_id' => Auth::id(),
         ]);
 
+        if ($request->filled('tags')) {
+            // 'explode' memecah string "tag1,tag2" menjadi array ['tag1', 'tag2']
+            $question->attachTags(explode(',', $request->tags));
+        }
+
         // 4. Redirect ke halaman (misal, ke dashboard)
-        // Nanti kita akan ganti ini ke halaman index questions
         return redirect()->route('dashboard')->with('success', 'Pertanyaan berhasil dipublikasikan!');
     }
 
@@ -134,6 +138,14 @@ class QuestionController extends Controller
             'body' => $validated['body'],
             'image' => $imagePath,
         ]);
+
+        if ($request->filled('tags')) {
+            // 'syncTags' akan otomatis menambah/menghapus tag yg berubah
+            $question->syncTags(explode(',', $request->tags));
+        } else {
+            // Jika input tags dikosongkan, hapus semua tag
+            $question->detachTags($question->tags);
+        }
 
         // 4. Redirect kembali ke halaman detail
         return redirect()->route('questions.show', $question->id)->with('success', 'Pertanyaan berhasil diupdate!');
